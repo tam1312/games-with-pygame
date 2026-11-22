@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 pygame.init()
@@ -12,14 +13,35 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 FPS = 60
 
+numbers = {
+    11: "ELEVEN",
+    12: "TWELVE", 
+    13: "THIRTEEN",
+    14: "FOURTEEN",
+    15: "FIFTEEN",
+    16: "SIXTEEN",
+    17: "SEVENTEEN",
+    18: "EIGHTEEN",
+    19: "NINETEEN",
+    20: "TWENTY"
+}
+
+
+#instruction 
 instruction_font = pygame.font.Font(None, 60)
 instruction_text = instruction_font.render("Unscramble the word!", True, (0, 0, 0))
 instruction_text_rect = instruction_text.get_rect(center=(WIDTH//2, HEIGHT//4))
 
 
+
 def main():
 
     running = True
+
+    hint_visible = False
+
+    game_number = random.randrange(11,20)
+    game_word = numbers[game_number]
 
     #exit button
     exit_size = 70
@@ -30,6 +52,10 @@ def main():
         exit_size,
         exit_size
     )
+
+    #hint button
+    hint_img = pygame.image.load('images/lightbulb.png').convert_alpha()
+    hint_rect = hint_img.get_rect(topleft=(margin + 5, margin + 5))
     
 
     while running:
@@ -40,7 +66,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if exit_rect.collidepoint(event.pos):
                     running = False
-
+                if hint_rect.collidepoint(event.pos):
+                    hint_visible = False if hint_visible else True
 
         screen.fill(BACKGROUND_COLOR)
 
@@ -63,10 +90,27 @@ def main():
         #Instruction text
         screen.blit(instruction_text, instruction_text_rect)
 
+        #hint button
+        screen.blit(hint_img, hint_rect)
+
+        if hint_visible:
+            hint_button(game_number)
+
         pygame.display.update()     
 
 
     pygame.quit()
+
+
+def hint_button(number):
+    #print(f"Clicked on hint!! Your number is: {number}")
+    
+    hint_font = pygame.font.Font(None, 150)
+    hint_text = hint_font.render(f"{number}", True, (0, 0, 0))
+    hint_text_rect = hint_text.get_rect(center=(WIDTH//2, HEIGHT//6))
+
+    screen.blit(hint_text, hint_text_rect)
+    pygame.display.update()
 
 
 if __name__ == "__main__":
