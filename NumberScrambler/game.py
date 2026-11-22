@@ -56,7 +56,10 @@ def main():
     #hint button
     hint_img = pygame.image.load('images/lightbulb.png').convert_alpha()
     hint_rect = hint_img.get_rect(topleft=(margin + 5, margin + 5))
-    
+
+    #change button
+    change_img = pygame.image.load('images/change.png').convert_alpha()
+    change_rect = change_img.get_rect(topleft=(margin, margin * 7))
 
     while running:
 
@@ -68,6 +71,10 @@ def main():
                     running = False
                 if hint_rect.collidepoint(event.pos):
                     hint_visible = False if hint_visible else True
+                if change_rect.collidepoint(event.pos):
+                    game_number = random.randrange(11,20)
+                    game_word = numbers[game_number]
+                
 
         screen.fill(BACKGROUND_COLOR)
 
@@ -93,6 +100,9 @@ def main():
         #hint button
         screen.blit(hint_img, hint_rect)
 
+        #change button
+        screen.blit(change_img, change_rect)
+
         if hint_visible:
             hint_button(game_number)
 
@@ -111,6 +121,8 @@ def hint_button(number):
 
     screen.blit(hint_text, hint_text_rect)
     pygame.display.update()
+
+
 
 
 if __name__ == "__main__":
