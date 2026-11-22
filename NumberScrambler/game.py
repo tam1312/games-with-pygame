@@ -1,6 +1,11 @@
 import pygame
 
 
+pygame.init()
+
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+WIDTH, HEIGHT = screen.get_size()
+
 pygame.display.set_caption("Number Scrambler!")
 BACKGROUND_COLOR = "#FFB521"
 RED = (255, 0, 0)
@@ -10,10 +15,7 @@ FPS = 60
 
 def main():
 
-    pygame.init()
-
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    WIDTH, HEIGHT = screen.get_size()
+    running = True
 
     #exit button
     exit_size = 70
@@ -24,9 +26,7 @@ def main():
         exit_size,
         exit_size
     )
-
-
-    running = True
+    
 
     while running:
 
@@ -36,6 +36,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if exit_rect.collidepoint(event.pos):
                     running = False
+
 
         screen.fill(BACKGROUND_COLOR)
 
@@ -57,7 +58,6 @@ def main():
 
 
         pygame.display.update()     
-
 
 
     pygame.quit()
