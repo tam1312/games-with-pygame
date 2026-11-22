@@ -12,6 +12,10 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 FPS = 60
 
+instruction_font = pygame.font.Font(None, 60)
+instruction_text = instruction_font.render("Unscramble the word!", True, (0, 0, 0))
+instruction_text_rect = instruction_text.get_rect(center=(WIDTH//2, HEIGHT//4))
+
 
 def main():
 
@@ -56,6 +60,8 @@ def main():
             (exit_rect.left + 12, exit_rect.bottom - 12), 6
         )
 
+        #Instruction text
+        screen.blit(instruction_text, instruction_text_rect)
 
         pygame.display.update()     
 
