@@ -33,6 +33,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_rect.collidepoint(event.pos):
+                    running = False
 
         screen.fill(BACKGROUND_COLOR)
 
