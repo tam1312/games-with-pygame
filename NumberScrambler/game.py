@@ -50,13 +50,13 @@ def main():
     game_word = numbers[game_number]
 
     correct_order = list(game_word)
-    mixed_order = correct_order.copy()
-    random.shuffle(mixed_order)
+    scrambled_order = correct_order.copy()
+    random.shuffle(scrambled_order)
 
     BOXSIZE = 130
 
     selected_scrambled_rect = None
-
+    selected_ordered_rect = None
     
     #exit button
     exit_size = 70
@@ -91,8 +91,8 @@ def main():
                     game_word = numbers[game_number]
 
                     correct_order = list(game_word)
-                    mixed_order = correct_order.copy()
-                    random.shuffle(mixed_order)
+                    scrambled_order = correct_order.copy()
+                    random.shuffle(scrambled_order)
 
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
@@ -100,14 +100,23 @@ def main():
                         print(f"You clicked the letter number {i}")
                         selected_scrambled_rect = i
 
+                for i, rect in enumerate(ordered_rects):
+                    if rect.collidepoint(event.pos):
+                        print(f"You clicked the correct word letter number {i}")
+                        selected_ordered_rect = i
+
 
         screen.fill(BACKGROUND_COLOR)
-        scrambled_rects = draw_scrambled_word(mixed_order, BOXSIZE, margin)
-        draw_correct_word(correct_order, BOXSIZE, margin)
+        scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin)
+        ordered_rects = draw_correct_word(correct_order, BOXSIZE, margin)
 
-        #draw a border around the selected box
+        #draw a border around the selected scrambled rect
         if selected_scrambled_rect is not None:
             draw_border(scrambled_rects[selected_scrambled_rect])
+
+        #draw a border around the selected ordered rect
+        if selected_ordered_rect is not None:
+            draw_border(ordered_rects[selected_ordered_rect])
 
         #exit button
         pygame.draw.rect(screen, RED, exit_rect, border_radius=8)
@@ -181,11 +190,15 @@ def draw_scrambled_word(mixed_order, BOXSIZE, margin):
 
     return scrambled_rects
 
+
 def draw_correct_word(correct_order, BOXSIZE, margin):
     num_letters = len(correct_order)
     total_width = (num_letters * BOXSIZE) + ((num_letters - 1) * margin)
 
     start_x = (WIDTH - total_width) // 2
+
+    #list of the rectangles to keep track of
+    ordered_rects = []
 
     for i, letter in enumerate(correct_order):
         x = start_x + i * (BOXSIZE + margin)
@@ -194,8 +207,19 @@ def draw_correct_word(correct_order, BOXSIZE, margin):
         rect = pygame.Rect(x, y, BOXSIZE, BOXSIZE)
         pygame.draw.rect(screen, WHITE, rect, border_radius=8)
 
+        ordered_rects.append(rect)
+
+    return ordered_rects
+
+
 def draw_border(rect):
     pygame.draw.rect(screen, YELLOW, rect, 10, border_radius=8)
+
+
+def check_box(ordered_box, scrambled_box, correct_word, scrambled_word):
+    None
+    #check if the box from the scrambled list is in the right position in the correct_word 
+
     
 if __name__ == "__main__":
     main()
