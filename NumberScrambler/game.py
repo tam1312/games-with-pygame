@@ -97,13 +97,17 @@ def main():
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
                     if rect.collidepoint(event.pos):
-                        print(f"You clicked the letter number {i}")
-                        selected_scrambled_rect = i
+                        if selected_scrambled_rect == i:
+                            selected_scrambled_rect = None
+                        else:
+                            selected_scrambled_rect = i
 
                 for i, rect in enumerate(ordered_rects):
                     if rect.collidepoint(event.pos):
-                        print(f"You clicked the correct word letter number {i}")
-                        selected_ordered_rect = i
+                        if selected_ordered_rect == i:
+                            selected_ordered_rect = None
+                        else:
+                            selected_ordered_rect = i
 
 
         screen.fill(BACKGROUND_COLOR)
@@ -216,10 +220,6 @@ def draw_border(rect):
     pygame.draw.rect(screen, YELLOW, rect, 10, border_radius=8)
 
 
-def check_box(ordered_box, scrambled_box, correct_word, scrambled_word):
-    None
-    #check if the box from the scrambled list is in the right position in the correct_word 
 
-    
 if __name__ == "__main__":
     main()
