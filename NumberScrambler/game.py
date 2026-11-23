@@ -13,6 +13,7 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = "#E5E4E2"
+YELLOW = (255, 255, 0)
 
 FPS = 60
 
@@ -54,6 +55,8 @@ def main():
 
     BOXSIZE = 130
 
+    selected_scrambled_rect = None
+
     
     #exit button
     exit_size = 70
@@ -92,10 +95,19 @@ def main():
                     random.shuffle(mixed_order)
 
                     hint_visible = False
+                for i, rect in enumerate(scrambled_rects):
+                    if rect.collidepoint(event.pos):
+                        print(f"You clicked the letter number {i}")
+                        selected_scrambled_rect = i
+
 
         screen.fill(BACKGROUND_COLOR)
-        draw_scrambled_word(mixed_order, BOXSIZE, margin)
+        scrambled_rects = draw_scrambled_word(mixed_order, BOXSIZE, margin)
         draw_correct_word(correct_order, BOXSIZE, margin)
+
+        #draw a border around the selected box
+        if selected_scrambled_rect is not None:
+            draw_border(scrambled_rects[selected_scrambled_rect])
 
         #exit button
         pygame.draw.rect(screen, RED, exit_rect, border_radius=8)
@@ -149,6 +161,9 @@ def draw_scrambled_word(mixed_order, BOXSIZE, margin):
 
     start_x = (WIDTH - total_width) // 2
 
+    #new list for the rectangles to keep track of them
+    scrambled_rects = []
+
     for i, letter in enumerate(mixed_order):
         x = start_x + i * (BOXSIZE + margin)
         y = HEIGHT // 3 * 2
@@ -156,12 +171,15 @@ def draw_scrambled_word(mixed_order, BOXSIZE, margin):
         rect = pygame.Rect(x, y, BOXSIZE, BOXSIZE)
         pygame.draw.rect(screen, GRAY, rect, border_radius=8)
 
+        scrambled_rects.append(rect)
+
         #draw a letter in the box
         letter_text = letter_font.render(letter, True, BLACK)
         letter_text_rect = letter_text.get_rect(center=rect.center)
 
         screen.blit(letter_text, letter_text_rect)
 
+    return scrambled_rects
 
 def draw_correct_word(correct_order, BOXSIZE, margin):
     num_letters = len(correct_order)
@@ -176,6 +194,8 @@ def draw_correct_word(correct_order, BOXSIZE, margin):
         rect = pygame.Rect(x, y, BOXSIZE, BOXSIZE)
         pygame.draw.rect(screen, WHITE, rect, border_radius=8)
 
+def draw_border(rect):
+    pygame.draw.rect(screen, YELLOW, rect, 10, border_radius=8)
     
 if __name__ == "__main__":
     main()
