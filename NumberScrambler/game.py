@@ -57,6 +57,11 @@ def main():
 
     selected_scrambled_rect = None
     selected_ordered_rect = None
+
+    highlight_start_time = None
+    HIGHLIGHT_DURATION = 1000
+
+    answer_list = [None] * len(correct_order) #ex. eleven => [None, None, None, None, None, None]
     
     #exit button
     exit_size = 70
@@ -94,6 +99,9 @@ def main():
                     scrambled_order = correct_order.copy()
                     random.shuffle(scrambled_order)
 
+                    selected_scrambled_rect = None
+                    selected_ordered_rect = None
+
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
                     if rect.collidepoint(event.pos):
@@ -108,7 +116,22 @@ def main():
                             selected_ordered_rect = None
                         else:
                             selected_ordered_rect = i
+                if selected_ordered_rect is not None and selected_scrambled_rect is not None:
+                    valid = check_boxes(selected_scrambled_rect, selected_ordered_rect,
+                                correct_order, scrambled_order, answer_list)
+                    if valid:
+                        highlight_start_time = pygame.time.get_ticks()
 
+                    else:
+                        selected_scrambled_rect = None
+                        selected_ordered_rect = None
+
+            if highlight_start_time is not None:
+                current_time = pygame.time.get_ticks()
+                if current_time - highlight_start_time >= HIGHLIGHT_DURATION:
+                    selected_scrambled_rect = None
+                    selected_ordered_rect = None
+                    highlight_start_time = None
 
         screen.fill(BACKGROUND_COLOR)
         scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin)
@@ -219,6 +242,19 @@ def draw_correct_word(correct_order, BOXSIZE, margin):
 def draw_border(rect):
     pygame.draw.rect(screen, YELLOW, rect, 10, border_radius=8)
 
+
+def check_boxes(scrambled_index, ordered_index, 
+                correct_order, scrambled_order, answer_list):
+    scrambled_letter = scrambled_order[scrambled_index]
+    correct_letter = correct_order[ordered_index]
+
+    if scrambled_letter == correct_letter:
+        print("Correct!")
+        answer_list[ordered_index] = scrambled_letter
+
+        return True
+
+    return False
 
 
 if __name__ == "__main__":
