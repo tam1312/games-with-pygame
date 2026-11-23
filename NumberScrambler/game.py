@@ -86,10 +86,16 @@ def main():
                 if change_rect.collidepoint(event.pos):
                     game_number = random.randrange(11,20)
                     game_word = numbers[game_number]
-                
+
+                    correct_order = list(game_word)
+                    mixed_order = correct_order.copy()
+                    random.shuffle(mixed_order)
+
+                    hint_visible = False
 
         screen.fill(BACKGROUND_COLOR)
         draw_scrambled_word(mixed_order, BOXSIZE, margin)
+        draw_correct_word(correct_order, BOXSIZE, margin)
 
         #exit button
         pygame.draw.rect(screen, RED, exit_rect, border_radius=8)
@@ -148,14 +154,28 @@ def draw_scrambled_word(mixed_order, BOXSIZE, margin):
         y = HEIGHT // 3 * 2
         
         rect = pygame.Rect(x, y, BOXSIZE, BOXSIZE)
-        pygame.draw.rect(screen, GRAY, rect)
+        pygame.draw.rect(screen, GRAY, rect, border_radius=8)
 
         #draw a letter in the box
         letter_text = letter_font.render(letter, True, BLACK)
         letter_text_rect = letter_text.get_rect(center=rect.center)
 
         screen.blit(letter_text, letter_text_rect)
+
+
+def draw_correct_word(correct_order, BOXSIZE, margin):
+    num_letters = len(correct_order)
+    total_width = (num_letters * BOXSIZE) + ((num_letters - 1) * margin)
+
+    start_x = (WIDTH - total_width) // 2
+
+    for i, letter in enumerate(correct_order):
+        x = start_x + i * (BOXSIZE + margin)
+        y = HEIGHT // 3 + (HEIGHT // 3) // 3
         
+        rect = pygame.Rect(x, y, BOXSIZE, BOXSIZE)
+        pygame.draw.rect(screen, WHITE, rect, border_radius=8)
+
     
 if __name__ == "__main__":
     main()
