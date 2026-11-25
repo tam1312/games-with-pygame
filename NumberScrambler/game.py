@@ -62,6 +62,7 @@ def main():
     HIGHLIGHT_DURATION = 1000
 
     answer_list = [None] * len(correct_order) #ex. eleven => [None, None, None, None, None, None]
+    used_letters = [False] * len(scrambled_order) #helps with not removing duplicate letters
     
     #exit button
     exit_size = 70
@@ -102,6 +103,9 @@ def main():
                     selected_scrambled_rect = None
                     selected_ordered_rect = None
 
+                    answer_list = [None] * len(correct_order)
+                    used_letters = [False] * len(scrambled_order)
+
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
                     if rect.collidepoint(event.pos):
@@ -118,7 +122,7 @@ def main():
                             selected_ordered_rect = i
                 if selected_ordered_rect is not None and selected_scrambled_rect is not None:
                     valid = check_boxes(selected_scrambled_rect, selected_ordered_rect,
-                                correct_order, scrambled_order, answer_list)
+                                correct_order, scrambled_order, answer_list, used_letters)
                     if valid:
                         highlight_start_time = pygame.time.get_ticks()
 
@@ -126,16 +130,16 @@ def main():
                         selected_scrambled_rect = None
                         selected_ordered_rect = None
 
-            if highlight_start_time is not None:
-                current_time = pygame.time.get_ticks()
-                if current_time - highlight_start_time >= HIGHLIGHT_DURATION:
-                    selected_scrambled_rect = None
-                    selected_ordered_rect = None
-                    highlight_start_time = None
+        if highlight_start_time is not None:
+            current_time = pygame.time.get_ticks()
+            if current_time - highlight_start_time >= HIGHLIGHT_DURATION:
+                selected_scrambled_rect = None
+                selected_ordered_rect = None
+                highlight_start_time = None
 
         screen.fill(BACKGROUND_COLOR)
-        scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin)
-        ordered_rects = draw_correct_word(correct_order, BOXSIZE, margin)
+        scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin, used_letters)
+        ordered_rects = draw_correct_word(answer_list, BOXSIZE, margin)
 
         #draw a border around the selected scrambled rect
         if selected_scrambled_rect is not None:
@@ -190,7 +194,7 @@ def hint_button(number):
     pygame.display.update()
 
 
-def draw_scrambled_word(mixed_order, BOXSIZE, margin):
+def draw_scrambled_word(mixed_order, BOXSIZE, margin, used_letters):
     # ex. seventeen: 9 * 90 + 8 * 20 = 970 (9 * BOXSIZE + 8 * margin)
     num_letters = len(mixed_order)
     total_width = (num_letters * BOXSIZE) + ((num_letters - 1) * margin)
@@ -209,17 +213,24 @@ def draw_scrambled_word(mixed_order, BOXSIZE, margin):
 
         scrambled_rects.append(rect)
 
-        #draw a letter in the box
-        letter_text = letter_font.render(letter, True, BLACK)
-        letter_text_rect = letter_text.get_rect(center=rect.center)
+        '''if mixed_order[i] not in answer_list:
+            #draw a letter in the box if it's not been solved 
+            letter_text = letter_font.render(letter, True, BLACK)
+            letter_text_rect = letter_text.get_rect(center=rect.center)
 
-        screen.blit(letter_text, letter_text_rect)
+            screen.blit(letter_text, letter_text_rect)'''
+
+        if not used_letters[i]:
+            letter_text = letter_font.render(letter, True, BLACK)
+            letter_text_rect = letter_text.get_rect(center=rect.center)
+
+            screen.blit(letter_text, letter_text_rect)
 
     return scrambled_rects
 
 
-def draw_correct_word(correct_order, BOXSIZE, margin):
-    num_letters = len(correct_order)
+def draw_correct_word(answer_list, BOXSIZE, margin):
+    num_letters = len(answer_list)
     total_width = (num_letters * BOXSIZE) + ((num_letters - 1) * margin)
 
     start_x = (WIDTH - total_width) // 2
@@ -227,7 +238,7 @@ def draw_correct_word(correct_order, BOXSIZE, margin):
     #list of the rectangles to keep track of
     ordered_rects = []
 
-    for i, letter in enumerate(correct_order):
+    for i, letter in enumerate(answer_list):
         x = start_x + i * (BOXSIZE + margin)
         y = HEIGHT // 3 + (HEIGHT // 3) // 3
         
@@ -235,6 +246,15 @@ def draw_correct_word(correct_order, BOXSIZE, margin):
         pygame.draw.rect(screen, WHITE, rect, border_radius=8)
 
         ordered_rects.append(rect)
+
+        #draw the letter if the slot is occupied
+        if letter is not None:
+
+            letter_text = letter_font.render(letter, True, BLACK)
+            letter_text_rect = letter_text.get_rect(center=rect.center)
+
+            screen.blit(letter_text, letter_text_rect)
+
 
     return ordered_rects
 
@@ -244,13 +264,15 @@ def draw_border(rect):
 
 
 def check_boxes(scrambled_index, ordered_index, 
-                correct_order, scrambled_order, answer_list):
+                correct_order, scrambled_order, answer_list, used_letters):
+    
     scrambled_letter = scrambled_order[scrambled_index]
     correct_letter = correct_order[ordered_index]
 
     if scrambled_letter == correct_letter:
         print("Correct!")
         answer_list[ordered_index] = scrambled_letter
+        used_letters[scrambled_index] = True
 
         return True
 
