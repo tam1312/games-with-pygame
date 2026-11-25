@@ -30,6 +30,19 @@ numbers = {
     20: "TWENTY"
 }
 
+numbers_audio = {
+    11: "audio/eleven.mp3",
+    12: "audio/twelve.mp3", 
+    13: "audio/thirteen.mp3",
+    14: "audio/fourteen.mp3",
+    15: "audio/fifteen.mp3",
+    16: "audio/sixteen.mp3",
+    17: "audio/seventeen.mp3",
+    18: "audio/eighteen.mp3",
+    19: "audio/nineteen.mp3",
+    20: "audio/twenty.mp3"
+}
+
 
 #instruction text
 instruction_font = pygame.font.Font(None, 60)
@@ -48,6 +61,9 @@ def main():
 
     game_number = random.randint(11,20)
     game_word = numbers[game_number]
+
+    game_sound = pygame.mixer.Sound(numbers_audio[game_number])
+    number_spoken = False
 
     correct_order = list(game_word)
     scrambled_order = correct_order.copy()
@@ -106,6 +122,9 @@ def main():
                     answer_list = [None] * len(correct_order)
                     used_letters = [False] * len(scrambled_order)
 
+                    game_sound = pygame.mixer.Sound(numbers_audio[game_number])
+                    number_spoken = False
+
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
                     if rect.collidepoint(event.pos):
@@ -136,6 +155,11 @@ def main():
                 selected_scrambled_rect = None
                 selected_ordered_rect = None
                 highlight_start_time = None
+
+        if False not in used_letters and not number_spoken:
+            hint_visible = True
+            game_sound.play()
+            number_spoken = True
 
         screen.fill(BACKGROUND_COLOR)
         scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin, used_letters)
