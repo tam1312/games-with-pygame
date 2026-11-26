@@ -65,6 +65,10 @@ def main():
     game_sound = pygame.mixer.Sound(numbers_audio[game_number])
     number_spoken = False
 
+    yay_sound = pygame.mixer.Sound("audio/yay-kids.mp3")
+    yay_sound_played = False
+    yay_sound_timer_start = 0
+
     correct_order = list(game_word)
     scrambled_order = correct_order.copy()
     random.shuffle(scrambled_order)
@@ -124,6 +128,9 @@ def main():
 
                     game_sound = pygame.mixer.Sound(numbers_audio[game_number])
                     number_spoken = False
+                    yay_sound_played = False
+                    yay_sound_timer_start = 0
+
 
                     hint_visible = False
                 for i, rect in enumerate(scrambled_rects):
@@ -156,10 +163,22 @@ def main():
                 selected_ordered_rect = None
                 highlight_start_time = None
 
-        if False not in used_letters and not number_spoken:
+        #if the word has been unscrambled
+        if False not in used_letters and not number_spoken: 
             hint_visible = True
             game_sound.play()
             number_spoken = True
+
+            yay_sound_timer_start = pygame.time.get_ticks()
+
+            #play yay after 2 seconds
+        if number_spoken and not yay_sound_played:
+            current_time = pygame.time.get_ticks()
+
+            if current_time - yay_sound_timer_start >= 1500:
+                yay_sound.play()
+                yay_sound_played = True
+
 
         screen.fill(BACKGROUND_COLOR)
         scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin, used_letters)
