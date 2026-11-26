@@ -52,7 +52,6 @@ instruction_text_rect = instruction_text.get_rect(center=(WIDTH//2, HEIGHT//4))
 #scrambled word text
 letter_font = pygame.font.Font(None, 70)
 
-
 def main():
 
     running = True
@@ -308,16 +307,24 @@ def draw_border(rect):
 
 def check_boxes(scrambled_index, ordered_index, 
                 correct_order, scrambled_order, answer_list, used_letters):
+
+    correct_sound = pygame.mixer.Sound("audio/correct.mp3")
+    wrong_sound = pygame.mixer.Sound("audio/wrong.mp3")
     
     scrambled_letter = scrambled_order[scrambled_index]
     correct_letter = correct_order[ordered_index]
 
     if scrambled_letter == correct_letter:
-        print("Correct!")
+        
         answer_list[ordered_index] = scrambled_letter
         used_letters[scrambled_index] = True
 
+        correct_sound.play()
+
         return True
+
+    else:
+        wrong_sound.play()
 
     return False
 
