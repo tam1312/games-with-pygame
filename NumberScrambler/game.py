@@ -61,7 +61,7 @@ def main():
     game_number = random.randint(11,20)
     game_word = numbers[game_number]
 
-    game_sound = pygame.mixer.Sound(numbers_audio[game_number])
+    number_sound = pygame.mixer.Sound(numbers_audio[game_number])
     number_spoken = False
 
     yay_sound = pygame.mixer.Sound("audio/yay-kids.mp3")
@@ -101,6 +101,10 @@ def main():
     change_img = pygame.image.load('images/change.png').convert_alpha()
     change_rect = change_img.get_rect(topleft=(margin, margin * 7))
 
+    #speaker button
+    speaker_img = pygame.image.load('images/speaker.png').convert_alpha()
+    speaker_rect = speaker_img.get_rect(center=(WIDTH//2 - 150, HEIGHT//6 - 10))
+
     while running:
 
         for event in pygame.event.get():
@@ -125,13 +129,17 @@ def main():
                     answer_list = [None] * len(correct_order)
                     used_letters = [False] * len(scrambled_order)
 
-                    game_sound = pygame.mixer.Sound(numbers_audio[game_number])
+                    number_sound = pygame.mixer.Sound(numbers_audio[game_number])
                     number_spoken = False
                     yay_sound_played = False
                     yay_sound_timer_start = 0
 
 
                     hint_visible = False
+
+                if hint_visible and speaker_rect.collidepoint(event.pos):
+                    number_sound.play()
+                
                 for i, rect in enumerate(scrambled_rects):
                     if rect.collidepoint(event.pos):
                         if selected_scrambled_rect == i:
@@ -165,7 +173,7 @@ def main():
         #if the word has been unscrambled
         if False not in used_letters and not number_spoken: 
             hint_visible = True
-            game_sound.play()
+            number_sound.play()
             number_spoken = True
 
             yay_sound_timer_start = pygame.time.get_ticks()
@@ -178,6 +186,7 @@ def main():
                 yay_sound.play()
                 yay_sound_played = True
 
+        
 
         screen.fill(BACKGROUND_COLOR)
         scrambled_rects = draw_scrambled_word(scrambled_order, BOXSIZE, margin, used_letters)
@@ -218,22 +227,22 @@ def main():
 
         if hint_visible:
             hint_button(game_number)
+            screen.blit(speaker_img, speaker_rect)
 
-        pygame.display.update()     
+        pygame.display.update()
 
 
     pygame.quit()
 
 
 def hint_button(number):
-    #print(f"Clicked on hint!! Your number is: {number}")
     
     hint_font = pygame.font.Font(None, 150)
     hint_text = hint_font.render(f"{number}", True, (0, 0, 0))
     hint_text_rect = hint_text.get_rect(center=(WIDTH//2, HEIGHT//6))
 
     screen.blit(hint_text, hint_text_rect)
-    pygame.display.update()
+
 
 
 def draw_scrambled_word(mixed_order, BOXSIZE, margin, used_letters):
@@ -310,7 +319,7 @@ def check_boxes(scrambled_index, ordered_index,
 
     correct_sound = pygame.mixer.Sound("audio/correct.mp3")
     wrong_sound = pygame.mixer.Sound("audio/wrong.mp3")
-    
+
     scrambled_letter = scrambled_order[scrambled_index]
     correct_letter = correct_order[ordered_index]
 
