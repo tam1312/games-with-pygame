@@ -78,7 +78,7 @@ def main():
     selected_ordered_rect = None
 
     highlight_start_time = None
-    HIGHLIGHT_DURATION = 1000
+    HIGHLIGHT_DURATION = 200
 
     answer_list = [None] * len(correct_order) #ex. eleven => [None, None, None, None, None, None]
     used_letters = [False] * len(scrambled_order) #helps with not removing duplicate letters
