@@ -56,7 +56,11 @@ def main():
 
     running = True
 
-    hint_visible = False
+    global game_number, game_word, correct_order, scrambled_order
+    global selected_scrambled_rect, selected_ordered_rect
+    global answer_list, used_letters, number_sound
+    global number_spoken, yay_sound_played, yay_sound_timer_start
+    global hint_visible
 
     game_number = random.randint(11,20)
     game_word = numbers[game_number]
@@ -67,6 +71,8 @@ def main():
     yay_sound = pygame.mixer.Sound("audio/yay-kids.mp3")
     yay_sound_played = False
     yay_sound_timer_start = 0
+
+    hint_visible = False
 
     correct_order = list(game_word)
     scrambled_order = correct_order.copy()
@@ -116,26 +122,7 @@ def main():
                 if hint_rect.collidepoint(event.pos):
                     hint_visible = False if hint_visible else True
                 if change_rect.collidepoint(event.pos):
-                    game_number = random.randrange(11,20)
-                    game_word = numbers[game_number]
-
-                    correct_order = list(game_word)
-                    scrambled_order = correct_order.copy()
-                    random.shuffle(scrambled_order)
-
-                    selected_scrambled_rect = None
-                    selected_ordered_rect = None
-
-                    answer_list = [None] * len(correct_order)
-                    used_letters = [False] * len(scrambled_order)
-
-                    number_sound = pygame.mixer.Sound(numbers_audio[game_number])
-                    number_spoken = False
-                    yay_sound_played = False
-                    yay_sound_timer_start = 0
-
-
-                    hint_visible = False
+                    change_number()
 
                 if hint_visible and speaker_rect.collidepoint(event.pos):
                     number_sound.play()
@@ -336,6 +323,35 @@ def check_boxes(scrambled_index, ordered_index,
         wrong_sound.play()
 
     return False
+
+
+def change_number():
+    global game_number, game_word, correct_order, scrambled_order
+    global selected_scrambled_rect, selected_ordered_rect
+    global answer_list, used_letters, number_sound
+    global number_spoken, yay_sound_played, yay_sound_timer_start
+    global hint_visible
+
+    game_number = random.randrange(11,20)
+    game_word = numbers[game_number]
+
+    correct_order = list(game_word)
+    scrambled_order = correct_order.copy()
+    random.shuffle(scrambled_order)
+
+    selected_scrambled_rect = None
+    selected_ordered_rect = None
+
+    answer_list = [None] * len(correct_order)
+    used_letters = [False] * len(scrambled_order)
+
+    number_sound = pygame.mixer.Sound(numbers_audio[game_number])
+    number_spoken = False
+    yay_sound_played = False
+    yay_sound_timer_start = 0
+
+
+    hint_visible = False
 
 
 if __name__ == "__main__":
