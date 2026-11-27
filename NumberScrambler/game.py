@@ -172,7 +172,7 @@ def main():
             if current_time - yay_sound_timer_start >= 1500:
                 yay_sound.play()
                 yay_sound_played = True
-
+                change_number()
         
 
         screen.fill(BACKGROUND_COLOR)
